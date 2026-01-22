@@ -65,4 +65,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         });
     }
+
+    // YouTube Video Autoplay
+    const youtubeVideo = document.getElementById('live-dj-video');
+    if (youtubeVideo) {
+        // Force reload with autoplay after a short delay
+        setTimeout(() => {
+            const src = youtubeVideo.src;
+            youtubeVideo.src = src + '&autoplay=1';
+        }, 500);
+    }
 });
