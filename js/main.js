@@ -1,11 +1,29 @@
+
 // Mobile Menu Toggle
 document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const navLinks = document.querySelector('.nav-links');
+    const navContainer = document.querySelector('.nav-container');
 
-    if (mobileMenuToggle) {
+    if (mobileMenuToggle && navContainer) {
         mobileMenuToggle.addEventListener('click', function() {
+            navContainer.classList.toggle('active');
             navLinks.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            // Prevent body scroll when menu is open
+            if (navContainer.classList.contains('active')) {
+                document.body.classList.add('menu-open');
+                document.body.style.overflow = 'hidden';
+                document.body.style.position = 'fixed';
+                document.body.style.width = '100%';
+                document.body.style.height = '100%';
+            } else {
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+            }
         });
     }
 
@@ -13,8 +31,38 @@ document.addEventListener('DOMContentLoaded', function() {
     const navLinkItems = document.querySelectorAll('.nav-links a');
     navLinkItems.forEach(link => {
         link.addEventListener('click', function() {
+            if (navContainer) {
+                navContainer.classList.remove('active');
+            }
             navLinks.classList.remove('active');
+            if (mobileMenuToggle) {
+                mobileMenuToggle.classList.remove('active');
+            }
+            document.body.classList.remove('menu-open');
+            document.body.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
+            document.body.style.height = '';
         });
+    });
+
+    // Close mobile menu when clicking outside
+    document.addEventListener('click', function(event) {
+        if (navContainer && mobileMenuToggle) {
+            const isClickInsideNav = navContainer.contains(event.target);
+            const isClickOnToggle = mobileMenuToggle.contains(event.target);
+            
+            if (!isClickInsideNav && !isClickOnToggle && navContainer.classList.contains('active')) {
+                navContainer.classList.remove('active');
+                navLinks.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                document.body.classList.remove('menu-open');
+                document.body.style.overflow = '';
+                document.body.style.position = '';
+                document.body.style.width = '';
+                document.body.style.height = '';
+            }
+        }
     });
 
     // Smooth scroll for anchor links
@@ -75,4 +123,33 @@ document.addEventListener('DOMContentLoaded', function() {
             youtubeVideo.src = src + '&autoplay=1';
         }, 500);
     }
+
+    // Hero Play Widget - Video Control
+    const heroPlayWidget = document.querySelector('.hero-play-widget');
+    const heroVideo = document.querySelector('.hero-video');
+    const playIcon = document.querySelector('.play-icon');
+    const playText = document.querySelector('.play-text');
+
+    if (heroPlayWidget && heroVideo) {
+        heroPlayWidget.addEventListener('click', function() {
+            if (heroVideo.paused) {
+                heroVideo.play();
+                playText.textContent = 'Pause Demo';
+                // Update icon to pause
+                playIcon.innerHTML = '<circle cx="12" cy="12" r="10" fill="white"/><rect x="9" y="7" width="2" height="10" fill="currentColor"/><rect x="13" y="7" width="2" height="10" fill="currentColor"/>';
+            } else {
+                heroVideo.pause();
+                playText.textContent = 'Play Demo';
+                // Update icon back to play
+                playIcon.innerHTML = '<circle cx="12" cy="12" r="10" fill="white"/><path d="M10 8L16 12L10 16V8Z" fill="currentColor"/>';
+            }
+        });
+
+        // Update button text when video ends
+        heroVideo.addEventListener('ended', function() {
+            playText.textContent = 'Play Demo';
+            playIcon.innerHTML = '<circle cx="12" cy="12" r="10" fill="white"/><path d="M10 8L16 12L10 16V8Z" fill="currentColor"/>';
+        });
+    }
+
 });
